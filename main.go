@@ -19,16 +19,18 @@ func getURL(url string) (int, []byte, error) {
 		return 0, nil, err
 	}
 
-	date, err := lm.Read()
-	if err != nil {
-		return 0, nil, err
-	}
-
-	if config.Polling && len(date) > 0 {
-		req.Header.Add("If-Modified-Since", string(date))
-	}
-
 	req.Header.Add("Authorization", "token "+config.GitHubToken)
+
+	if url == config.GitHubEndpoint {
+		date, err := lm.Read()
+		if err != nil {
+			return 0, nil, err
+		}
+
+		if config.Polling && len(date) > 0 {
+			req.Header.Add("If-Modified-Since", string(date))
+		}
+	}
 
 	client := http.Client{}
 	resp, err := client.Do(req)
@@ -42,8 +44,11 @@ func getURL(url string) (int, []byte, error) {
 		return 0, nil, err
 	}
 
-	date = []byte(resp.Header.Get("Last-Modified"))
-	lm.Write(date)
+	if resp.Header.Get("Last-Modified") != "" {
+		date := []byte(resp.Header.Get("Last-Modified"))
+		fmt.Println(string(date))
+		lm.Write(date)
+	}
 
 	return resp.StatusCode, bytes, nil
 }
