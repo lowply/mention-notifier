@@ -1,0 +1,8 @@
+{
+    "Login": "login",
+    "GitHubToken": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "GitHubEndpoint": "https://api.github.com/notifications",
+    "SlackEndpoint": "https://hooks.slack.com/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    "Reason": "mention",
+    "Polling": true
+}
