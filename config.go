@@ -30,7 +30,7 @@ func (c *Config) Dir() string {
 	return os.Getenv("HOME") + "/" + ".config"
 }
 
-func (c *Config) Check() error {
+func (c *Config) CheckDir() error {
 	_, err := os.Stat(c.Dir())
 	if err != nil {
 		if strings.Contains(err.Error(), "no such file or directory") {
@@ -43,7 +43,13 @@ func (c *Config) Check() error {
 	return nil
 }
 
-func (c *Config) Read(path string) error {
+func (c *Config) Read() error {
+	err := c.CheckDir()
+	if err != nil {
+		return err
+	}
+
+	path := c.Dir() + "/mention-notifier.json"
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err

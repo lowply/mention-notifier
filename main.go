@@ -49,12 +49,7 @@ func getURL(url string) (int, []byte, error) {
 }
 
 func main() {
-	err := config.Check()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	err = config.Read(config.Dir() + "/mention-notifier.json")
+	err := config.Read()
 	if err != nil {
 		log.Fatal(err)
 	}
