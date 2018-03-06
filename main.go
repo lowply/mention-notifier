@@ -12,7 +12,7 @@ func main() {
 	}
 
 	var ns Notifications
-	err = ns.Get()
+	err = ns.Get(config.GitHubEndpoint)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -23,7 +23,6 @@ func main() {
 
 	for _, n := range ns {
 		if n.Reason != config.Reason {
-			logger.Info("Reason mismatch: " + n.Reason)
 			continue
 		}
 

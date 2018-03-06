@@ -54,8 +54,8 @@ type Notification struct {
 
 type Notifications []Notification
 
-func (n *Notifications) Get() error {
-	req, err := http.NewRequest("GET", config.GitHubEndpoint, nil)
+func (n *Notifications) Get(url string) error {
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
 	}
@@ -72,7 +72,7 @@ func (n *Notifications) Get() error {
 		req.Header.Add("If-Modified-Since", string(date))
 	}
 
-	logger.Info("GET " + config.GitHubEndpoint)
+	logger.Info("GET " + url)
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -86,7 +86,7 @@ func (n *Notifications) Get() error {
 	}
 
 	if resp.StatusCode != 200 {
-		return errors.New("Unable to access to the endpoint")
+		return errors.New("Unable to access to the endpoint: " + url)
 	}
 
 	if resp.Header.Get("Last-Modified") != "" {

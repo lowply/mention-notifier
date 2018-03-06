@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -70,6 +71,10 @@ func (l *LatestComment) Get(url string) error {
 	}
 	defer resp.Body.Close()
 	logger.Info("DONE " + resp.Status)
+
+	if resp.StatusCode != 200 {
+		return errors.New("Unable to access to the endpoint: " + url)
+	}
 
 	bytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
