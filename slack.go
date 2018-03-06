@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -9,20 +8,12 @@ import (
 )
 
 type Slack struct {
-	Endpoint     string
 	Notification Notification
+	Comment      LatestComment
 }
 
 func (s *Slack) Post() error {
-	fmt.Println("Posting to Slack...")
-
-	n := s.Notification
-	comment, err := newLatestComment(n.Subject.LatestCommentURL)
-	if err != nil {
-		return err
-	}
-
-	pi := strconv.FormatInt(comment.UpdatedAt.Unix(), 10)
+	updated_at := strconv.FormatInt(s.Comment.UpdatedAt.Unix(), 10)
 	data := url.Values{}
 	data.Set("payload", `{
 		"channel": "#notifications",
@@ -30,29 +21,30 @@ func (s *Slack) Post() error {
 		"icon_emoji": ":octocat:",
 		"attachments": [
 			{
-				"fallback": "`+n.Subject.Title+`",
+				"fallback": "`+s.Notification.Subject.Title+`",
 				"color": "#36a64f",
 				"pretext": "Hey @lowply, you've got a new mention!",
-				"author_name": "`+comment.User.Login+`",
-				"author_link": "`+comment.User.HTMLURL+`",
-				"author_icon": "`+comment.User.AvatarURL+`",
-				"title": "`+n.Subject.Title+`",
-				"title_link": "`+comment.HTMLURL+`",
-				"text": "Repository: `+n.Repository.FullName+`\n`+comment.Body+`",
-				"ts": "`+pi+`"
+				"author_name": "`+s.Comment.User.Login+`",
+				"author_link": "`+s.Comment.User.HTMLURL+`",
+				"author_icon": "`+s.Comment.User.AvatarURL+`",
+				"title": "`+s.Notification.Subject.Title+`",
+				"title_link": "`+s.Comment.HTMLURL+`",
+				"text": "Repository: `+s.Notification.Repository.FullName+`\n`+s.Comment.Body+`",
+				"ts": "`+updated_at+`"
 			}
 		]
 	}`)
-	req, err := http.NewRequest("POST", s.Endpoint, strings.NewReader(data.Encode()))
+	req, err := http.NewRequest("POST", config.SlackEndpoint, strings.NewReader(data.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
+	logger.Info("Posting to Slack")
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
+	logger.Info("DONE" + resp.Status)
 
-	fmt.Println(resp.Status)
 	return nil
 }

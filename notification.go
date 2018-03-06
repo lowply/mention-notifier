@@ -1,6 +1,12 @@
 package main
 
-import "time"
+import (
+	"encoding/json"
+	"errors"
+	"io/ioutil"
+	"net/http"
+	"time"
+)
 
 type Notification struct {
 	ID         string `json:"id"`
@@ -44,4 +50,60 @@ type Notification struct {
 	UpdatedAt  time.Time `json:"updated_at"`
 	LastReadAt time.Time `json:"last_read_at"`
 	URL        string    `json:"url"`
+}
+
+type Notifications []Notification
+
+func (n *Notifications) Get() error {
+	req, err := http.NewRequest("GET", config.GitHubEndpoint, nil)
+	if err != nil {
+		return err
+	}
+
+	req.Header.Add("Authorization", "token "+config.GitHubToken)
+
+	date, err := lm.Read()
+	if err != nil {
+		return err
+	}
+
+	if config.Polling && len(date) > 0 {
+		logger.Warn("Adding If-Modified-Since header")
+		req.Header.Add("If-Modified-Since", string(date))
+	}
+
+	logger.Info("GET " + config.GitHubEndpoint)
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	logger.Info("DONE " + resp.Status)
+
+	if resp.StatusCode == 304 {
+		return nil
+	}
+
+	if resp.StatusCode != 200 {
+		return errors.New("Unable to access to the endpoint")
+	}
+
+	if resp.Header.Get("Last-Modified") != "" {
+		date := []byte(resp.Header.Get("Last-Modified"))
+		logger.Warn("Last-Modified: " + string(date))
+		lm.Write(date)
+	}
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(bytes, &n)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

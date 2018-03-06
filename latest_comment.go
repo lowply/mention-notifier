@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"net/http"
 	"time"
 )
 
@@ -53,17 +55,31 @@ type LatestComment struct {
 	} `json:"_links"`
 }
 
-func newLatestComment(url string) (*LatestComment, error) {
-	_, bytes, err := getURL(url)
+func (l *LatestComment) Get(url string) error {
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return nil, err
+		return err
+	}
+	req.Header.Add("Authorization", "token "+config.GitHubToken)
+
+	logger.Info("GET " + url)
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	logger.Info("DONE " + resp.Status)
+
+	bytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
 	}
 
-	var comment LatestComment
-	err = json.Unmarshal(bytes, &comment)
+	err = json.Unmarshal(bytes, &l)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	return &comment, nil
+	return nil
 }

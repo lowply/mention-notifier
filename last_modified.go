@@ -2,7 +2,6 @@ package main
 
 import (
 	"io/ioutil"
-	"log"
 	"os"
 )
 
@@ -17,7 +16,7 @@ var lm = LastModified{
 func (l *LastModified) Read() ([]byte, error) {
 	_, err := os.Stat(l.Path)
 	if err != nil {
-		log.Println("Creating " + l.Path + " ...")
+		logger.Info("Creating " + l.Path + " ...")
 		l.Write(nil)
 	}
 
@@ -29,5 +28,6 @@ func (l *LastModified) Read() ([]byte, error) {
 }
 
 func (l *LastModified) Write(data []byte) {
+	logger.Info("Updating " + l.Path)
 	ioutil.WriteFile(l.Path, data, 0644)
 }

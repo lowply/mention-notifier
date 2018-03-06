@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io/ioutil"
 	"os"
-	"strings"
 )
 
 type Config struct {
@@ -27,30 +26,15 @@ var config = Config{
 }
 
 func (c *Config) Dir() string {
-	return os.Getenv("HOME") + "/" + ".config"
+	return os.Getenv("HOME") + "/.config"
 }
 
-func (c *Config) CheckDir() error {
-	_, err := os.Stat(c.Dir())
-	if err != nil {
-		if strings.Contains(err.Error(), "no such file or directory") {
-			err := os.Mkdir(config.Dir(), 0755)
-			if err != nil {
-				return err
-			}
-		}
-	}
-	return nil
+func (c *Config) Logpath() string {
+	return os.Getenv("HOME") + "/.log/mention-notifier.log"
 }
 
 func (c *Config) Read() error {
-	err := c.CheckDir()
-	if err != nil {
-		return err
-	}
-
-	path := c.Dir() + "/mention-notifier.json"
-	file, err := ioutil.ReadFile(path)
+	file, err := ioutil.ReadFile(c.Dir() + "/mention-notifier.json")
 	if err != nil {
 		return err
 	}
