@@ -68,7 +68,7 @@ func (n *Notifications) Get() error {
 	}
 
 	if config.Polling && len(date) > 0 {
-		logger.Warn("Adding If-Modified-Since header")
+		logger.Info("Adding If-Modified-Since header")
 		req.Header.Add("If-Modified-Since", string(date))
 	}
 
@@ -91,7 +91,7 @@ func (n *Notifications) Get() error {
 
 	if resp.Header.Get("Last-Modified") != "" {
 		date := []byte(resp.Header.Get("Last-Modified"))
-		logger.Warn("Last-Modified: " + string(date))
+		logger.Info("Last-Modified: " + string(date))
 		lm.Write(date)
 	}
 
