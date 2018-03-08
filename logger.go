@@ -1,9 +1,7 @@
 package main
 
 import (
-	"log"
-	"os"
-	"path"
+	"fmt"
 	"time"
 )
 
@@ -13,16 +11,19 @@ type Logger struct {
 var logger = Logger{}
 
 func (_ *Logger) out(msg string) {
-	_ = os.Mkdir(path.Dir(config.Logpath()), 0755)
+	// _ = os.Mkdir(path.Dir(config.Logpath()), 0755)
 
-	f, err := os.OpenFile(config.Logpath(), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer f.Close()
+	// f, err := os.OpenFile(config.Logpath(), os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// defer f.Close()
+
+	// t := time.Now()
+	// f.Write([]byte(t.Format(time.UnixDate) + " : " + msg + "\n"))
 
 	t := time.Now()
-	f.Write([]byte(t.Format(time.UnixDate) + " : " + msg + "\n"))
+	fmt.Println(t.Format(time.UnixDate) + " : " + msg)
 }
 
 func (l *Logger) Info(msg string) {

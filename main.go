@@ -1,24 +1,23 @@
 package main
 
 import (
-	"log"
-	"os"
+	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func main() {
+func handler() error {
 	err := config.Read()
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	var ns Notifications
 	err = ns.Get(config.GitHubEndpoint)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	if len(ns) == 0 {
-		os.Exit(0)
+		return nil
 	}
 
 	for _, n := range ns {
@@ -34,7 +33,7 @@ func main() {
 		var c LatestComment
 		err := c.Get(n.Subject.LatestCommentURL)
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		var s = Slack{
@@ -44,7 +43,12 @@ func main() {
 
 		err = s.Post()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
+	return nil
+}
+
+func main() {
+	lambda.Start(handler)
 }

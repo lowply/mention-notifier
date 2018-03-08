@@ -11,6 +11,12 @@ run:
 clean:
 	rm -rf bin dist
 
+lambda:
+	GOOS=linux GOARCH=amd64 go build -o main $(SRC_FILES)
+	zip main.zip main
+	aws lambda update-function-code --function-name test --zip-file fileb://main.zip
+	rm main.zip main
+
 build: clean
 	mkdir bin dist
 	gox -osarch="darwin/amd64" \

@@ -67,7 +67,7 @@ func (n *Notifications) Get(url string) error {
 		return err
 	}
 
-	if config.Polling && len(date) > 0 {
+	if config.Polling == "true" && len(date) > 0 {
 		logger.Info("Adding If-Modified-Since header")
 		req.Header.Add("If-Modified-Since", string(date))
 	}
