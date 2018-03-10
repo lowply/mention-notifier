@@ -17,6 +17,7 @@ func handler() error {
 	}
 
 	if len(ns) == 0 {
+		logger.Info("---------------------- 304 ----------------------")
 		return nil
 	}
 

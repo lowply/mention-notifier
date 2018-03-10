@@ -14,8 +14,7 @@ clean:
 lambda:
 	GOOS=linux GOARCH=amd64 go build -o main $(SRC_FILES)
 	zip main.zip main
-	aws lambda update-function-code --function-name test --zip-file fileb://main.zip
-	rm main.zip main
+	rm main
 
 build: clean
 	mkdir bin dist

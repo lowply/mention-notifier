@@ -33,19 +33,14 @@ func (c *Config) Logpath() string {
 
 func (c *Config) Read() error {
 	// Required
-	if os.Getenv("LOGIN") == "" {
-		return errors.New("LOGIN " + "is empty.")
+	for _, v := range []string{"LOGIN", "GITHUB_TOKEN", "SLACK_ENDPOINT"} {
+		if os.Getenv(v) == "" {
+			return errors.New(v + " is empty.")
+		}
 	}
+
 	c.Login = os.Getenv("LOGIN")
-
-	if os.Getenv("GITHUB_TOKEN") == "" {
-		return errors.New("GITHUB_TOKEN" + " " + "is empty.")
-	}
 	c.GitHubToken = os.Getenv("GITHUB_TOKEN")
-
-	if os.Getenv("SLACK_ENDPOINT") == "" {
-		return errors.New("SLACK_ENDPOINT" + " " + "is empty.")
-	}
 	c.SlackEndpoint = os.Getenv("SLACK_ENDPOINT")
 
 	// Options
