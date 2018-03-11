@@ -1,6 +1,5 @@
-bin
-dist
-vendor
-env.json
+main
 main.zip
-local.log
+vendor
+cf_package.yml
+invoke.log

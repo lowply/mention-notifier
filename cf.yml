@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MentionNotifier
+Resources:
+  MentionNotifierFunction:
+    Properties:
+      Code: ./main
+      Description: MentionNotifier - https://github.com/lowply/mention-notifier
+      Environment:
+        Variables:
+          GITHUB_ENDPOINT: https://api.github.com/notifications
+          GITHUB_TOKEN: 
+          LOGIN: 
+          POLLING: 'true'
+          REASON: mention
+          SLACK_ENDPOINT: 
+      FunctionName: mention-notifier
+      Handler: main
+      Role:
+        Fn::GetAtt:
+        - MentionNotifierRole
+        - Arn
+      Runtime: go1.x
+    Type: AWS::Lambda::Function
+  MentionNotifierPermission:
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: mention-notifier
+      Principal: events.amazonaws.com
+      SourceArn:
+        Fn::GetAtt:
+        - MentionNotifierRule
+        - Arn
+    Type: AWS::Lambda::Permission
+  MentionNotifierRole:
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /service-role/
+      RoleName: lambda-mention-notifier
+    Type: AWS::IAM::Role
+  MentionNotifierRule:
+    Properties:
+      Description: Run mention notifier every minute
+      Name: lambda-mention-notifier
+      ScheduleExpression: rate(1 minute)
+      State: ENABLED
+      Targets:
+      - Arn:
+          Fn::GetAtt:
+          - MentionNotifierFunction
+          - Arn
+        Id: lowply-mention-notifier
+    Type: AWS::Events::Rule

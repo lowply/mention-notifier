@@ -1,0 +1,86 @@
+#!/bin/bash
+
+PROFILE="private"
+BUCKET="lowply.github.io"
+NAME="mention-notifier"
+AWS="aws --profile ${PROFILE}"
+
+usage(){
+	echo "Usage: "
+	exit 1
+}
+
+has(){
+	type ${1} >/dev/null 2>&1 || { echo "Command not found: ${1}" 1>&2; exit 1; }
+}
+
+package(){
+	aws --profile private s3 rm --recursive s3://${BUCKET}/${NAME}/
+	${AWS} cloudformation package \
+		--s3-bucket "${BUCKET}" \
+		--s3-prefix "${NAME}" \
+		--template-file cf.yml \
+		--output-template-file cf_package.yml
+}
+
+deploy(){
+	package
+	${AWS} cloudformation deploy \
+		--template-file cf_package.yml \
+		--stack-name "${NAME}" \
+		--capabilities CAPABILITY_NAMED_IAM
+}
+
+update(){
+	make build
+	package
+	${AWS} cloudformation update-stack \
+		--stack-name "${NAME}" \
+		--template-body file://cf_package.yml \
+		--capabilities CAPABILITY_NAMED_IAM
+}
+
+delete(){
+	${AWS} cloudformation delete-stack \
+		--stack-name "${NAME}"
+}
+
+validate(){
+	${AWS} cloudformation validate-template \
+		--template-body file://cf.yml
+}
+
+run(){
+	${AWS} lambda invoke \
+		--function-name "mention-notifier" \
+		invoke.log
+}
+
+main(){
+	has aws
+	HANDLER="${1}"
+	shift
+
+	case ${HANDLER} in
+		"deploy")
+			deploy
+		;;
+		"update")
+			update
+		;;
+		"delete")
+			delete
+		;;
+		"validate")
+			validate
+		;;
+		"run")
+			run
+		;;
+		*)
+			usage
+		;;
+	esac
+}
+
+main $@
