@@ -15,28 +15,33 @@ has(){
 }
 
 package(){
-	aws --profile private s3 rm --recursive s3://${BUCKET}/${NAME}/
-	${AWS} cloudformation package \
-		--s3-bucket "${BUCKET}" \
-		--s3-prefix "${NAME}" \
-		--template-file cf.yml \
-		--output-template-file cf_package.yml
+	make build
+
+	# There's a bug in the `cloudformation package` command where
+	# execution of a Go binary fails with the following error message:
+	#     "errorMessage": "fork/exec /var/task/main: permission denied"
+	# 
+	# ${AWS} cloudformation package \
+	# 	--s3-bucket "${BUCKET}" \
+	# 	--s3-prefix "${NAME}" \
+	# 	--template-file cf.yml \
+	# 	--output-template-file cf_package.yml
+
+	${AWS} s3 cp main.zip s3://${BUCKET}/${NAME}/main.zip
 }
 
 deploy(){
 	package
 	${AWS} cloudformation deploy \
-		--template-file cf_package.yml \
+		--template-file cf.yml \
 		--stack-name "${NAME}" \
 		--capabilities CAPABILITY_NAMED_IAM
 }
 
 update(){
-	make build
-	package
 	${AWS} cloudformation update-stack \
 		--stack-name "${NAME}" \
-		--template-body file://cf_package.yml \
+		--template-body file://cf.yml \
 		--capabilities CAPABILITY_NAMED_IAM
 }
 
@@ -62,6 +67,9 @@ main(){
 	shift
 
 	case ${HANDLER} in
+		"package")
+			package
+		;;
 		"deploy")
 			deploy
 		;;
