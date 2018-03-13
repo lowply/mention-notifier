@@ -3,8 +3,10 @@ Description: MentionNotifier
 Resources:
   MentionNotifierFunction:
     Properties:
-      Code: ./main
-      Description: MentionNotifier - https://github.com/lowply/mention-notifier
+      Code:
+        S3Bucket: lowply.github.io
+        S3Key: mention-notifier/main.zip
+      Description: https://github.com/lowply/mention-notifier
       Environment:
         Variables:
           GITHUB_ENDPOINT: https://api.github.com/notifications
@@ -45,12 +47,12 @@ Resources:
       ManagedPolicyArns:
       - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Path: /service-role/
-      RoleName: lambda-mention-notifier
+      RoleName: mention-notifier
     Type: AWS::IAM::Role
   MentionNotifierRule:
     Properties:
       Description: Run mention notifier every minute
-      Name: lambda-mention-notifier
+      Name: mention-notifier
       ScheduleExpression: rate(1 minute)
       State: ENABLED
       Targets:
@@ -58,5 +60,5 @@ Resources:
           Fn::GetAtt:
           - MentionNotifierFunction
           - Arn
-        Id: lowply-mention-notifier
+        Id: mention-notifier
     Type: AWS::Events::Rule
