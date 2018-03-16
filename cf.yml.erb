@@ -5,17 +5,17 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        S3Bucket: <%= ENV['BUCKET'] %>
+        S3Bucket: <%= configy['BUCKET'] %>
         S3Key: !Sub ${AWS::StackName}/main.zip
       Description: !Sub https://github.com/lowply/${AWS::StackName}
       Environment:
         Variables:
-          LOGIN: <%= y['LOGIN'] %>
-          GITHUB_TOKEN: <%= y['GITHUB_TOKEN'] %>
-          SLACK_ENDPOINT: <%= y['SLACK_ENDPOINT'] %>
-          GITHUB_ENDPOINT: <%= y['GITHUB_ENDPOINT'] %>
-          REASON: <%= y['REASON'] %>
-          POLLING: '<%= y['POLLING'] %>'
+          LOGIN: <%= config['LOGIN'] %>
+          GITHUB_TOKEN: <%= config['GITHUB_TOKEN'] %>
+          SLACK_ENDPOINT: <%= config['SLACK_ENDPOINT'] %>
+          GITHUB_ENDPOINT: <%= config['GITHUB_ENDPOINT'] %>
+          REASON: <%= config['REASON'] %>
+          POLLING: '<%= config['POLLING'] %>'
       FunctionName: !Sub ${AWS::StackName}
       Handler: main
       Role: !GetAtt MentionNotifierRole.Arn

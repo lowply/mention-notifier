@@ -25,10 +25,10 @@ end
 
 def main
   if File.exist?(CONFIG)
-    y = YAML.load_file(CONFIG)
+    config = YAML.load_file(CONFIG)
     required = ["BUCKET", "LOGIN", "GITHUB_TOKEN", "SLACK_ENDPOINT"]
     required.each do |v|
-      usage(v) if y[v].nil?
+      usage(v) if config[v].nil?
     end
 
     IO.write("cf.yml", ERB.new(IO.read("./cf.yml.erb"), nil, "%").result(binding))
