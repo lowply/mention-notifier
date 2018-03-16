@@ -39,9 +39,17 @@ deploy(){
 }
 
 update(){
-	${AWS} cloudformation update-stack \
+	# ${AWS} cloudformation update-stack \
+	# 	--stack-name "${NAME}" \
+	# 	--template-body file://cf.yml \
+	# 	--capabilities CAPABILITY_NAMED_IAM
+
+	# In most cases, `deploy` is better:
+	# https://qiita.com/yasuhiroki/items/8463eed1c78123313a6f
+
+	${AWS} cloudformation deploy \
+		--template-file cf.yml \
 		--stack-name "${NAME}" \
-		--template-body file://cf.yml \
 		--capabilities CAPABILITY_NAMED_IAM
 }
 

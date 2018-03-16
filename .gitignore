@@ -1,5 +1,5 @@
-main
 main.zip
+cf.yml
+config.yml
 vendor
-cf_package.yml
 invoke.log
