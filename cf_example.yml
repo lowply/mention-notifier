@@ -5,17 +5,24 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       Code:
-        S3Bucket: <%= configy['BUCKET'] %>
+        # S3 bucket to upload the zipped binary
+        S3Bucket: 
         S3Key: !Sub ${AWS::StackName}/main.zip
       Description: !Sub https://github.com/lowply/${AWS::StackName}
       Environment:
         Variables:
-          LOGIN: <%= config['LOGIN'] %>
-          GITHUB_TOKEN: <%= config['GITHUB_TOKEN'] %>
-          SLACK_ENDPOINT: <%= config['SLACK_ENDPOINT'] %>
-          GITHUB_ENDPOINT: <%= config['GITHUB_ENDPOINT'] %>
-          REASON: <%= config['REASON'] %>
-          POLLING: '<%= config['POLLING'] %>'
+          # Your GitHub username
+          LOGIN: 
+          # Your personal access token for GitHub
+          GITHUB_TOKEN: 
+          # Slack's Incoming Webhooks endpoint URL
+          SLACK_ENDPOINT: 
+          # GitHub's Notification API endpoint. Change it if you're on GitHub Enterprise
+          GITHUB_ENDPOINT: https://api.github.com/notifications
+          # Reason for notification. See https://developer.github.com/v3/activity/notifications/#notification-reasons for other options
+          REASON: mention
+          # Enables the "Last-Modified" header checking. See https://developer.github.com/v3/activity/notifications/ for more details
+          POLLING: 'true' 
       FunctionName: !Sub ${AWS::StackName}
       Handler: main
       Role: !GetAtt MentionNotifierRole.Arn
