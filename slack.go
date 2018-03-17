@@ -44,7 +44,7 @@ func (s *Slack) Post() error {
 		return err
 	}
 	defer resp.Body.Close()
-	logger.Info("DONE" + resp.Status)
+	logger.Info("DONE " + resp.Status)
 
 	return nil
 }

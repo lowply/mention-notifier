@@ -1,0 +1,105 @@
+#!/bin/bash
+
+usage(){
+	echo "Usage: AWSPROFILE=profile ${0} <package|deploy|update|delete|validate|run>"
+	exit 1
+}
+
+has(){
+	type ${1} >/dev/null 2>&1 || { echo "Command not found: ${1}" 1>&2; exit 1; }
+}
+
+package(){
+	make build
+
+	# There's a bug in the `cloudformation package` command where
+	# execution of a Go binary fails with the following error message:
+	#     "errorMessage": "fork/exec /var/task/main: permission denied"
+	# 
+	# ${AWS} cloudformation package \
+	# 	--s3-bucket "${BUCKET}" \
+	# 	--s3-prefix "${NAME}" \
+	# 	--template-file cf.yml \
+	# 	--output-template-file cf_package.yml
+
+	local BUCKET="$(cat cf.yml | grep S3Bucket | sed -e 's/^.*S3Bucket: //')"
+	[ -z "${BUCKET}" ] && abort "BUCKET is empty"
+	${AWS} s3 cp main.zip s3://${BUCKET}/${NAME}/main.zip
+}
+
+deploy(){
+	package
+	${AWS} cloudformation deploy \
+		--template-file cf.yml \
+		--stack-name "${NAME}" \
+		--capabilities CAPABILITY_NAMED_IAM
+}
+
+update(){
+	# ${AWS} cloudformation update-stack \
+	# 	--stack-name "${NAME}" \
+	# 	--template-body file://cf.yml \
+	# 	--capabilities CAPABILITY_NAMED_IAM
+
+	# In most cases, `deploy` is better:
+	# https://qiita.com/yasuhiroki/items/8463eed1c78123313a6f
+
+	${AWS} cloudformation deploy \
+		--template-file cf.yml \
+		--stack-name "${NAME}" \
+		--capabilities CAPABILITY_NAMED_IAM
+}
+
+delete(){
+	${AWS} cloudformation delete-stack \
+		--stack-name "${NAME}"
+	echo "Delete requested."
+}
+
+validate(){
+	${AWS} cloudformation validate-template \
+		--template-body file://cf.yml
+}
+
+run(){
+	${AWS} lambda invoke \
+		--function-name "mention-notifier" \
+		invoke.log
+}
+
+main(){
+	has aws
+	[ -z "${AWSPROFILE}" ] && usage
+
+    NAME="mention-notifier"
+    AWS="aws --profile ${AWSPROFILE}"
+
+	HANDLER="${1}"
+	shift
+
+	case ${HANDLER} in
+		"package")
+			package
+		;;
+		"deploy")
+			deploy
+		;;
+		"update")
+			update
+		;;
+		"delete")
+			delete
+		;;
+		"validate")
+			validate
+		;;
+		"run")
+			run
+		;;
+		*)
+			usage
+		;;
+	esac
+}
+
+main $@

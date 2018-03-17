@@ -1,2 +1,5 @@
-bin
-dist
+main.zip
+cf.yml
+vendor
+invoke.log
+.tmp

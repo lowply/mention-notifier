@@ -10,7 +10,7 @@ type LastModified struct {
 }
 
 var lm = LastModified{
-	Path: config.Dir() + "/mention-notifier.tmp",
+	Path: "/tmp/mention-notifier.tmp",
 }
 
 func (l *LastModified) Read() ([]byte, error) {

@@ -1,0 +1,62 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: MentionNotifier
+Resources:
+  MentionNotifierFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        # S3 bucket to upload the zipped binary
+        S3Bucket: 
+        S3Key: !Sub ${AWS::StackName}/main.zip
+      Description: !Sub https://github.com/lowply/${AWS::StackName}
+      Environment:
+        Variables:
+          # Your GitHub username
+          LOGIN: 
+          # Your personal access token for GitHub
+          GITHUB_TOKEN: 
+          # Slack's Incoming Webhooks endpoint URL
+          SLACK_ENDPOINT: 
+          # GitHub's Notification API endpoint. Change it if you're on GitHub Enterprise
+          GITHUB_ENDPOINT: https://api.github.com/notifications
+          # Reason for notification. See https://developer.github.com/v3/activity/notifications/#notification-reasons for other options
+          REASON: mention
+          # Enables the "Last-Modified" header checking. See https://developer.github.com/v3/activity/notifications/ for more details
+          POLLING: 'true' 
+      FunctionName: !Sub ${AWS::StackName}
+      Handler: main
+      Role: !GetAtt MentionNotifierRole.Arn
+      Runtime: go1.x
+  MentionNotifierPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub ${AWS::StackName}
+      Principal: events.amazonaws.com
+      SourceArn: !GetAtt MentionNotifierRule.Arn
+  MentionNotifierRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action:
+          - sts:AssumeRole
+          Effect: Allow
+          Principal:
+            Service:
+            - lambda.amazonaws.com
+        Version: '2012-10-17'
+      ManagedPolicyArns:
+      - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /service-role/
+      RoleName: !Sub ${AWS::StackName}
+  MentionNotifierRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Description: Run mention notifier every minute
+      Name: !Sub ${AWS::StackName}
+      ScheduleExpression: rate(1 minute)
+      State: ENABLED
+      Targets:
+      - Arn: !GetAtt MentionNotifierFunction.Arn
+        Id: !Sub ${AWS::StackName}

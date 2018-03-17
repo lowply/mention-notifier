@@ -1,28 +1,26 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"os"
 )
 
 type Config struct {
 	Login          string
 	GitHubToken    string
-	GitHubEndpoint string
 	SlackEndpoint  string
+	GitHubEndpoint string
 	Reason         string
-	Polling        bool
+	Polling        string
 }
 
 var config = Config{
 	Login:          "",
 	GitHubToken:    "",
-	GitHubEndpoint: "https://api.github.com/notifications",
 	SlackEndpoint:  "",
+	GitHubEndpoint: "https://api.github.com/notifications",
 	Reason:         "mention",
-	Polling:        false,
+	Polling:        "false",
 }
 
 func (c *Config) Dir() string {
@@ -34,18 +32,28 @@ func (c *Config) Logpath() string {
 }
 
 func (c *Config) Read() error {
-	file, err := ioutil.ReadFile(c.Dir() + "/mention-notifier.json")
-	if err != nil {
-		return err
+	// Required
+	for _, v := range []string{"LOGIN", "GITHUB_TOKEN", "SLACK_ENDPOINT"} {
+		if os.Getenv(v) == "" {
+			return errors.New(v + " is empty.")
+		}
 	}
 
-	err = json.Unmarshal(file, &config)
-	if err != nil {
-		return err
+	c.Login = os.Getenv("LOGIN")
+	c.GitHubToken = os.Getenv("GITHUB_TOKEN")
+	c.SlackEndpoint = os.Getenv("SLACK_ENDPOINT")
+
+	// Options
+	if os.Getenv("GITHUB_ENDPOINT") != "" {
+		c.GitHubEndpoint = os.Getenv("GITHUB_ENDPOINT")
 	}
 
-	if config.Login == "" || config.GitHubToken == "" || config.SlackEndpoint == "" {
-		return errors.New("Invalid config")
+	if os.Getenv("REASON") != "" {
+		c.Reason = os.Getenv("REASON")
+	}
+
+	if os.Getenv("POLLING") != "" {
+		c.Polling = os.Getenv("POLLING")
 	}
 
 	return nil
