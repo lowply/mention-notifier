@@ -1,5 +1,4 @@
 main.zip
 cf.yml
 vendor
-local.log
-.tmp
+lambda.log

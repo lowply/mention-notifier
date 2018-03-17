@@ -34,6 +34,6 @@ EOL
 
 echo "" | aws-sam-local local \
     invoke MentionNotifierFunction \
-    --log-file local.log
+    --log-file lambda.log
 
 rm template.yml

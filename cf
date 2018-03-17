@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage(){
-	echo "Usage: AWSPROFILE=profile ${0} <package|deploy|update|delete|validate|run>"
+	echo "Usage: AWSPROFILE=profile ${0} <package|deploy|update|delete|validate|run|local>"
 	exit 1
 }
 
@@ -19,10 +19,10 @@ package(){
 	# ${AWS} cloudformation package \
 	# 	--s3-bucket "${BUCKET}" \
 	# 	--s3-prefix "${NAME}" \
-	# 	--template-file cf.yml \
+	# 	--template-file ${TEMPLATE} \
 	# 	--output-template-file cf_package.yml
 
-	local BUCKET="$(cat cf.yml | grep S3Bucket | sed -e 's/^.*S3Bucket: //')"
+	local BUCKET="$(cat ${TEMPLATE} | grep S3Bucket | sed -e 's/^.*S3Bucket: //')"
 	[ -z "${BUCKET}" ] && abort "BUCKET is empty"
 	${AWS} s3 cp main.zip s3://${BUCKET}/${NAME}/main.zip
 }
@@ -30,7 +30,7 @@ package(){
 deploy(){
 	package
 	${AWS} cloudformation deploy \
-		--template-file cf.yml \
+		--template-file ${TEMPLATE} \
 		--stack-name "${NAME}" \
 		--capabilities CAPABILITY_NAMED_IAM
 }
@@ -38,14 +38,14 @@ deploy(){
 update(){
 	# ${AWS} cloudformation update-stack \
 	# 	--stack-name "${NAME}" \
-	# 	--template-body file://cf.yml \
+	# 	--template-body file://${TEMPLATE} \
 	# 	--capabilities CAPABILITY_NAMED_IAM
 
 	# In most cases, `deploy` is better:
 	# https://qiita.com/yasuhiroki/items/8463eed1c78123313a6f
 
 	${AWS} cloudformation deploy \
-		--template-file cf.yml \
+		--template-file ${TEMPLATE} \
 		--stack-name "${NAME}" \
 		--capabilities CAPABILITY_NAMED_IAM
 }
@@ -58,13 +58,13 @@ delete(){
 
 validate(){
 	${AWS} cloudformation validate-template \
-		--template-body file://cf.yml
+		--template-body file://${TEMPLATE}
 }
 
 run(){
 	${AWS} lambda invoke \
 		--function-name "mention-notifier" \
-		invoke.log
+		lambda.log
 }
 
 main(){
@@ -73,6 +73,9 @@ main(){
 
     NAME="mention-notifier"
     AWS="aws --profile ${AWSPROFILE}"
+	TEMPLATE="cf.yml"
+
+	[ -f ${FILE} ] || abord "${FILE} not found."
 
 	HANDLER="${1}"
 	shift
