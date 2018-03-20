@@ -23,7 +23,7 @@ func (s *Slack) Post() error {
 			{
 				"fallback": "`+s.Notification.Subject.Title+`",
 				"color": "#36a64f",
-				"pretext": "Hey @lowply, you've got a new mention!",
+				"pretext": "Hey @`+config.Login+`, you've got a new mention!",
 				"author_name": "`+s.Comment.User.Login+`",
 				"author_link": "`+s.Comment.User.HTMLURL+`",
 				"author_icon": "`+s.Comment.User.AvatarURL+`",

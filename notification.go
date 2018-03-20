@@ -107,3 +107,25 @@ func (n *Notifications) Get(url string) error {
 
 	return nil
 }
+
+func (n *Notification) MarkAsRead() error {
+	req, err := http.NewRequest("PATCH", n.URL, nil)
+	if err != nil {
+		return err
+	}
+	req.Header.Add("Authorization", "token "+config.GitHubToken)
+	logger.Info("Marking the notification as read: " + n.URL)
+	client := http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+	logger.Info("DONE " + resp.Status)
+
+	if resp.StatusCode != 205 {
+		return errors.New("Failed to mark the notification as read")
+	}
+
+	return nil
+}

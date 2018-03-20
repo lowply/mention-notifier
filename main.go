@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"strings"
+
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
@@ -37,19 +41,33 @@ func handler() error {
 			return err
 		}
 
-		var s = Slack{
-			Notification: n,
-			Comment:      c,
-		}
-
-		err = s.Post()
-		if err != nil {
-			return err
+		if strings.Contains(c.Body, config.Login) {
+			var s = Slack{
+				Notification: n,
+				Comment:      c,
+			}
+			err = s.Post()
+			if err != nil {
+				return err
+			}
+			err = n.MarkAsRead()
+			if err != nil {
+				return err
+			}
+		} else {
+			logger.Info("There is a notification, but the latest comment didn't mention you.")
 		}
 	}
 	return nil
 }
 
 func main() {
-	lambda.Start(handler)
+	if os.Getenv("LOCAL") == "true" {
+		err := handler()
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else {
+		lambda.Start(handler)
+	}
 }
