@@ -6,7 +6,7 @@ test:
 	go test -v -parallel=4 .
 
 run:
-	go run $(SRC_FILES)
+	LOCAL=true go run $(SRC_FILES)
 
 build:
 	GOOS=linux GOARCH=amd64 go build -o main $(SRC_FILES)
