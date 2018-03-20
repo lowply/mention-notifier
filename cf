@@ -1,7 +1,7 @@
 #!/bin/bash
 
 usage(){
-	echo "Usage: AWSPROFILE=profile ${0} <package|deploy|update|delete|validate|run|local>"
+	echo "Usage: AWSPROFILE=profile ${0} <package|deploy|update|delete|validate|run>"
 	exit 1
 }
 
@@ -41,13 +41,17 @@ update(){
 	# 	--template-body file://${TEMPLATE} \
 	# 	--capabilities CAPABILITY_NAMED_IAM
 
-	# In most cases, `deploy` is better:
-	# https://qiita.com/yasuhiroki/items/8463eed1c78123313a6f
-
 	${AWS} cloudformation deploy \
 		--template-file ${TEMPLATE} \
 		--stack-name "${NAME}" \
 		--capabilities CAPABILITY_NAMED_IAM
+}
+
+update-code(){
+	package
+	${AWS} lambda update-function-code \
+		--function-name "${NAME}" \
+		--zip-file fileb://main.zip
 }
 
 delete(){
@@ -89,6 +93,9 @@ main(){
 		;;
 		"update")
 			update
+		;;
+		"update-code")
+			update-code
 		;;
 		"delete")
 			delete
