@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"os"
+	"strconv"
 )
 
 type Config struct {
@@ -11,7 +12,7 @@ type Config struct {
 	SlackEndpoint  string
 	GitHubEndpoint string
 	Reason         string
-	Polling        string
+	Polling        bool
 }
 
 var config = Config{
@@ -20,7 +21,7 @@ var config = Config{
 	SlackEndpoint:  "",
 	GitHubEndpoint: "https://api.github.com/notifications",
 	Reason:         "mention",
-	Polling:        "false",
+	Polling:        false,
 }
 
 func (c *Config) Dir() string {
@@ -53,7 +54,11 @@ func (c *Config) Read() error {
 	}
 
 	if os.Getenv("POLLING") != "" {
-		c.Polling = os.Getenv("POLLING")
+		b, err := strconv.ParseBool(os.Getenv("POLLING"))
+		if err != nil {
+			return err
+		}
+		c.Polling = b
 	}
 
 	return nil
