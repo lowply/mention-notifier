@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -17,7 +18,7 @@ func (s *Slack) Post() error {
 	data := url.Values{}
 	data.Set("payload", `{
 		"channel": "#notifications",
-		"username": "GitHub Notifier",
+		"username": "Mention Notifier",
 		"icon_emoji": ":octocat:",
 		"attachments": [
 			{
@@ -43,6 +44,11 @@ func (s *Slack) Post() error {
 	if err != nil {
 		return err
 	}
+
+	if resp.StatusCode != 200 {
+		return errors.New("Error posting to Slack: " + resp.Status)
+	}
+
 	defer resp.Body.Close()
 	logger.Info("DONE " + resp.Status)
 
