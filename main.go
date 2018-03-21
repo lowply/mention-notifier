@@ -21,7 +21,7 @@ func handler() error {
 	}
 
 	if len(ns) == 0 {
-		logger.Info("---------------------- 304 ----------------------")
+		logger.Info("No notificaions")
 		return nil
 	}
 
@@ -41,21 +41,24 @@ func handler() error {
 			return err
 		}
 
-		if strings.Contains(c.Body, config.Login) {
-			var s = Slack{
-				Notification: n,
-				Comment:      c,
-			}
-			err = s.Post()
-			if err != nil {
-				return err
-			}
-			err = n.MarkAsRead()
-			if err != nil {
-				return err
-			}
-		} else {
+		if !strings.Contains(c.Body, config.Login) {
 			logger.Info("There is a notification, but the latest comment didn't mention you.")
+			continue
+		}
+
+		var s = Slack{
+			Notification: n,
+			Comment:      c,
+		}
+
+		err = s.Post()
+		if err != nil {
+			return err
+		}
+
+		err = n.MarkAsRead()
+		if err != nil {
+			return err
 		}
 	}
 	return nil

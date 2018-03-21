@@ -82,6 +82,7 @@ func (n *Notifications) Get(url string) error {
 	logger.Info("DONE " + resp.Status)
 
 	if resp.StatusCode == 304 {
+		logger.Info(resp.Status)
 		return nil
 	}
 
