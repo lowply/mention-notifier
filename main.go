@@ -31,7 +31,12 @@ func handler() error {
 		}
 
 		if n.Subject.LatestCommentURL == "" {
-			logger.Info("Empty LatestCommentURL for: " + n.Subject.URL)
+			logger.Info("Empty LatestCommentURL: " + n.Subject.URL)
+			continue
+		}
+
+		if !strings.Contains(n.Subject.LatestCommentURL, "comments") {
+			logger.Info("Issue or Pull Request was closed or reopened: " + n.Subject.LatestCommentURL)
 			continue
 		}
 
