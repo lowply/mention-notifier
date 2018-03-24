@@ -1,6 +1,6 @@
 default: run
 
-SRC_FILES = $(wildcard *.go)
+SRC_FILES = $(wildcard src/*.go)
 
 test:
 	go test -v -parallel=4 .
