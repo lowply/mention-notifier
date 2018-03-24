@@ -19,7 +19,7 @@ var config = Config{
 	Login:          "",
 	GitHubToken:    "",
 	SlackEndpoint:  "",
-	GitHubEndpoint: "https://api.github.com/notifications",
+	GitHubEndpoint: "https://api.github.com/notifications?participating=true",
 	Reason:         "mention",
 	Polling:        false,
 }
