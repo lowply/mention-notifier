@@ -14,18 +14,17 @@ func handler() error {
 		return err
 	}
 
-	var ns Notifications
-	err = ns.Get(config.GitHubEndpoint)
+	ns, err := NewNotifications(config.GitHubEndpoint)
 	if err != nil {
 		return err
 	}
 
-	if len(ns) == 0 {
+	if len(*ns) == 0 {
 		logger.Info("No notificaions")
 		return nil
 	}
 
-	for _, n := range ns {
+	for _, n := range *ns {
 		if n.Reason != config.Reason {
 			continue
 		}
@@ -39,19 +38,18 @@ func handler() error {
 			logger.Info("The latest comment URL is the issue URL: " + n.Subject.URL)
 			logger.Info("Checking the events of the issue/pr...")
 
-			var es IssueEvents
-			err := es.Get(n.Subject.URL + "/events")
+			es, err := NewIssueEvents(n.Subject.URL)
 			if err != nil {
 				return err
 			}
+
 			if es.ClosedOrReopened() {
 				logger.Info("Skipping notification as the issue is closed or reopened.")
 				continue
 			}
 		}
 
-		var c LatestComment
-		err = c.Get(n.Subject.LatestCommentURL)
+		c, err := NewLatestComment(n.Subject.LatestCommentURL)
 		if err != nil {
 			return err
 		}
@@ -61,10 +59,7 @@ func handler() error {
 			continue
 		}
 
-		var s = Slack{
-			Notification: n,
-			Comment:      c,
-		}
+		s := NewSlack(n, c)
 
 		err = s.Post()
 		if err != nil {

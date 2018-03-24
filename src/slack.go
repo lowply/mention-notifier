@@ -10,7 +10,14 @@ import (
 
 type Slack struct {
 	Notification Notification
-	Comment      LatestComment
+	Comment      *LatestComment
+}
+
+func NewSlack(n Notification, c *LatestComment) *Slack {
+	slack := new(Slack)
+	slack.Notification = n
+	slack.Comment = c
+	return slack
 }
 
 func (s *Slack) Post() error {

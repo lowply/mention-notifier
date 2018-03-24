@@ -38,6 +38,15 @@ type IssueEvent struct {
 
 type IssueEvents []IssueEvent
 
+func NewIssueEvents(url string) (*IssueEvents, error) {
+	events := new(IssueEvents)
+	err := events.Get(url + "/events")
+	if err != nil {
+		return nil, err
+	}
+	return events, nil
+}
+
 func (es *IssueEvents) Get(url string) error {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
