@@ -54,7 +54,7 @@ type Notification struct {
 
 type Notifications []Notification
 
-func (n *Notifications) Get(url string) error {
+func (ns *Notifications) Get(url string) error {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -101,7 +101,7 @@ func (n *Notifications) Get(url string) error {
 		return err
 	}
 
-	err = json.Unmarshal(bytes, &n)
+	err = json.Unmarshal(bytes, &ns)
 	if err != nil {
 		return err
 	}

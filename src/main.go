@@ -36,12 +36,22 @@ func handler() error {
 		}
 
 		if !strings.Contains(n.Subject.LatestCommentURL, "comments") {
-			logger.Info("Issue or Pull Request was closed or reopened: " + n.Subject.LatestCommentURL)
-			continue
+			logger.Info("The latest comment URL is the issue URL: " + n.Subject.URL)
+			logger.Info("Checking the events of the issue/pr...")
+
+			var es IssueEvents
+			err := es.Get(n.Subject.URL + "/events")
+			if err != nil {
+				return err
+			}
+			if es.ClosedOrReopened() {
+				logger.Info("Skipping notification as the issue is closed or reopened.")
+				continue
+			}
 		}
 
 		var c LatestComment
-		err := c.Get(n.Subject.LatestCommentURL)
+		err = c.Get(n.Subject.LatestCommentURL)
 		if err != nil {
 			return err
 		}
