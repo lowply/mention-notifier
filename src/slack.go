@@ -17,7 +17,6 @@ func (s *Slack) Post() error {
 	updated_at := strconv.FormatInt(s.Comment.UpdatedAt.Unix(), 10)
 	data := url.Values{}
 	data.Set("payload", `{
-		"channel": "#notifications",
 		"username": "Mention Notifier",
 		"icon_emoji": ":octocat:",
 		"attachments": [

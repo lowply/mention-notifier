@@ -5,8 +5,13 @@ usage(){
 	exit 1
 }
 
+abort(){
+	echo ${1} 1>&2
+	exit 1
+}
+
 has(){
-	type ${1} >/dev/null 2>&1 || { echo "Command not found: ${1}" 1>&2; exit 1; }
+	type ${1} >/dev/null 2>&1 || abort "Command not found: ${1}"
 }
 
 package(){
@@ -79,7 +84,7 @@ main(){
     AWS="aws --profile ${AWSPROFILE}"
 	TEMPLATE="cf.yml"
 
-	[ -f ${FILE} ] || abord "${FILE} not found."
+	[ -f ${TEMPLATE} ] || abort "${TEMPLATE} not found."
 
 	HANDLER="${1}"
 	shift
