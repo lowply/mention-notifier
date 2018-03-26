@@ -14,7 +14,8 @@ func handler() error {
 		return err
 	}
 
-	ns, err := NewNotifications(config.GitHubEndpoint)
+	var ns = new(Notifications)
+	err = ns.get(config.GitHubEndpoint)
 	if err != nil {
 		return err
 	}
@@ -38,18 +39,20 @@ func handler() error {
 			logger.Info("The latest comment URL is the issue URL: " + n.Subject.URL)
 			logger.Info("Checking the events of the issue/pr...")
 
-			es, err := NewIssueEvents(n.Subject.URL)
+			var es = new(IssueEvents)
+			err := es.get(n.Subject.URL + "/events")
 			if err != nil {
 				return err
 			}
 
-			if es.ClosedOrReopened() {
+			if es.closedOrReopened() {
 				logger.Info("Skipping notification as the issue is closed or reopened.")
 				continue
 			}
 		}
 
-		c, err := NewLatestComment(n.Subject.LatestCommentURL)
+		var c = new(LatestComment)
+		err := c.get(n.Subject.LatestCommentURL)
 		if err != nil {
 			return err
 		}
@@ -59,14 +62,16 @@ func handler() error {
 			continue
 		}
 
-		s := NewSlack(n, c)
+		var s = new(Slack)
+		s.Notification = n
+		s.Comment = c
 
-		err = s.Post()
+		err = s.post()
 		if err != nil {
 			return err
 		}
 
-		err = n.MarkAsRead()
+		err = n.markAsRead()
 		if err != nil {
 			return err
 		}

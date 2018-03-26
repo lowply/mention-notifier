@@ -54,16 +54,7 @@ type Notification struct {
 
 type Notifications []Notification
 
-func NewNotifications(url string) (*Notifications, error) {
-	ns := new(Notifications)
-	err := ns.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	return ns, nil
-}
-
-func (ns *Notifications) Get(url string) error {
+func (ns *Notifications) get(url string) error {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -118,7 +109,7 @@ func (ns *Notifications) Get(url string) error {
 	return nil
 }
 
-func (n *Notification) MarkAsRead() error {
+func (n *Notification) markAsRead() error {
 	req, err := http.NewRequest("PATCH", n.URL, nil)
 	if err != nil {
 		return err

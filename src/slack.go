@@ -13,14 +13,7 @@ type Slack struct {
 	Comment      *LatestComment
 }
 
-func NewSlack(n Notification, c *LatestComment) *Slack {
-	slack := new(Slack)
-	slack.Notification = n
-	slack.Comment = c
-	return slack
-}
-
-func (s *Slack) Post() error {
+func (s *Slack) post() error {
 	updated_at := strconv.FormatInt(s.Comment.UpdatedAt.Unix(), 10)
 	data := url.Values{}
 	data.Set("payload", `{

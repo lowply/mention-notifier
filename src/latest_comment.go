@@ -56,16 +56,7 @@ type LatestComment struct {
 	} `json:"_links"`
 }
 
-func NewLatestComment(url string) (*LatestComment, error) {
-	comment := new(LatestComment)
-	err := comment.Get(url)
-	if err != nil {
-		return nil, err
-	}
-	return comment, nil
-}
-
-func (l *LatestComment) Get(url string) error {
+func (l *LatestComment) get(url string) error {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err

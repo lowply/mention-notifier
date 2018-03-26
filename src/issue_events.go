@@ -38,16 +38,7 @@ type IssueEvent struct {
 
 type IssueEvents []IssueEvent
 
-func NewIssueEvents(url string) (*IssueEvents, error) {
-	events := new(IssueEvents)
-	err := events.Get(url + "/events")
-	if err != nil {
-		return nil, err
-	}
-	return events, nil
-}
-
-func (es *IssueEvents) Get(url string) error {
+func (es *IssueEvents) get(url string) error {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return err
@@ -79,10 +70,10 @@ func (es *IssueEvents) Get(url string) error {
 	return nil
 }
 
-func (es IssueEvents) ClosedOrReopened() bool {
+func (es IssueEvents) closedOrReopened() bool {
 	for i := len(es) - 1; i >= 0; i-- {
 		e := es[i].Event
-		if e == "reopened" || e == "closed" {
+		if e == "closed" || e == "reopened" {
 			return true
 		}
 	}
