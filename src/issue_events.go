@@ -70,9 +70,9 @@ func (es *IssueEvents) get(url string) error {
 	return nil
 }
 
-func (es IssueEvents) closedOrReopened() bool {
-	for i := len(es) - 1; i >= 0; i-- {
-		e := es[i].Event
+func (es *IssueEvents) closedOrReopened() bool {
+	for i := len(*es) - 1; i >= 0; i-- {
+		e := (*es)[i].Event
 		if e == "closed" || e == "reopened" {
 			return true
 		}

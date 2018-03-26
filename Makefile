@@ -3,7 +3,7 @@ default: run
 SRC_FILES = $(wildcard src/*.go)
 
 test:
-	go test -v -parallel=4 .
+	go test -v -parallel=4 ./...
 
 run:
 	LOCAL=true go run $(SRC_FILES)
