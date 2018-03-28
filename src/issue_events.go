@@ -1,10 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
-	"io/ioutil"
-	"net/http"
 	"time"
 )
 
@@ -38,35 +34,12 @@ type IssueEvent struct {
 
 type IssueEvents []IssueEvent
 
-func (es *IssueEvents) get(url string) error {
-	req, err := http.NewRequest("GET", url, nil)
+func (es *IssueEvents) query(url string) error {
+	var r = new(Requester)
+	err := r.GetAndUnmarshal(url, es)
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Authorization", "token "+config.GitHubToken)
-	logger.Info("GET " + url)
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	logger.Info("DONE " + resp.Status)
-
-	if resp.StatusCode != 200 {
-		return errors.New("Unable to access to the endpoint: " + url)
-	}
-
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(bytes, &es)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

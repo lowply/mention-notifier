@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"net/http"
 	"time"
 )
@@ -54,58 +52,13 @@ type Notification struct {
 
 type Notifications []Notification
 
-func (ns *Notifications) get(url string) error {
-	req, err := http.NewRequest("GET", url, nil)
+func (ns *Notifications) query(url string) error {
+	var r = new(Requester)
+	r.checkLastModified = true
+	err := r.GetAndUnmarshal(url, ns)
 	if err != nil {
 		return err
 	}
-
-	req.Header.Add("Authorization", "token "+config.GitHubToken)
-
-	date, err := lm.Read()
-	if err != nil {
-		return err
-	}
-
-	if config.Polling && len(date) > 0 {
-		logger.Info("Adding If-Modified-Since header")
-		req.Header.Add("If-Modified-Since", string(date))
-	}
-
-	logger.Info("GET " + url)
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	logger.Info("DONE " + resp.Status)
-
-	if resp.StatusCode == 304 {
-		logger.Info(resp.Status)
-		return nil
-	}
-
-	if resp.StatusCode != 200 {
-		return errors.New("Unable to access to the endpoint: " + url)
-	}
-
-	if resp.Header.Get("Last-Modified") != "" {
-		date := []byte(resp.Header.Get("Last-Modified"))
-		logger.Info("Last-Modified: " + string(date))
-		lm.Write(date)
-	}
-
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(bytes, &ns)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 

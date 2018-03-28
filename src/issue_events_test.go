@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestIssueEventsGet(t *testing.T) {
+func TestIssueEventsQuery(t *testing.T) {
 	mock, err := ioutil.ReadFile("mock/issue_events.json")
 	if err != nil {
 		log.Fatal(err)
@@ -21,7 +21,7 @@ func TestIssueEventsGet(t *testing.T) {
 	defer ts.Close()
 
 	var es = new(IssueEvents)
-	err = es.get(ts.URL)
+	err = es.query(ts.URL)
 	if err != nil {
 		log.Fatal(err)
 	}

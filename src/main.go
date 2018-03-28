@@ -15,7 +15,7 @@ func handler() error {
 	}
 
 	var ns = new(Notifications)
-	err = ns.get(config.GitHubEndpoint)
+	err = ns.query(config.GitHubEndpoint)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func handler() error {
 			logger.Info("Checking the events of the issue/pr...")
 
 			var es = new(IssueEvents)
-			err := es.get(n.Subject.URL + "/events")
+			err := es.query(n.Subject.URL + "/events")
 			if err != nil {
 				return err
 			}
@@ -52,7 +52,7 @@ func handler() error {
 		}
 
 		var c = new(LatestComment)
-		err := c.get(n.Subject.LatestCommentURL)
+		err := c.query(n.Subject.LatestCommentURL)
 		if err != nil {
 			return err
 		}
