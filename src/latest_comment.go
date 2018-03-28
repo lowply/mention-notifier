@@ -1,10 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"errors"
-	"io/ioutil"
-	"net/http"
 	"time"
 )
 
@@ -56,35 +52,11 @@ type LatestComment struct {
 	} `json:"_links"`
 }
 
-func (l *LatestComment) get(url string) error {
-	req, err := http.NewRequest("GET", url, nil)
+func (l *LatestComment) query(url string) error {
+	var r = new(Requester)
+	err := r.GetAndUnmarshal(url, l)
 	if err != nil {
 		return err
 	}
-	req.Header.Add("Authorization", "token "+config.GitHubToken)
-
-	logger.Info("GET " + url)
-	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	logger.Info("DONE " + resp.Status)
-
-	if resp.StatusCode != 200 {
-		return errors.New("Unable to access to the endpoint: " + url)
-	}
-
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(bytes, &l)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }

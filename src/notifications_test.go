@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestNotificationsGet(t *testing.T) {
+func TestNotificationsQuery(t *testing.T) {
 	mock, err := ioutil.ReadFile("mock/notifications.json")
 	if err != nil {
 		log.Fatal(err)
@@ -21,7 +21,7 @@ func TestNotificationsGet(t *testing.T) {
 	defer ts.Close()
 
 	var ns = new(Notifications)
-	err = ns.get(ts.URL)
+	err = ns.query(ts.URL)
 	if err != nil {
 		log.Fatal(err)
 	}
