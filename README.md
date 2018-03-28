@@ -12,16 +12,10 @@ Get notified on Slack when mentioned on GitHub.
 
 ## Development
 
-You can run this locally by doing following:
+You can run this locally by running following command:
 
 ```bash
-LOGIN=login \
-GITHUB_TOKEN=token \
-SLACK_ENDPOINT=endpoint \
-GITHUB_ENDPOINT=https://api.github.com/notifications \
-REASON=mention \
-POLLING=false \
-make run
+LOGIN=login GITHUB_TOKEN=token SLACK_ENDPOINT=endpoint POLLING=false make run
 ```
 
 The `POLLING` option should be `false` while development.
