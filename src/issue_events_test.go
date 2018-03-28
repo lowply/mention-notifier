@@ -9,7 +9,7 @@ import (
 	"testing"
 )
 
-func TestGet(t *testing.T) {
+func TestIssueEventsGet(t *testing.T) {
 	mock, err := ioutil.ReadFile("mock/issue_events.json")
 	if err != nil {
 		log.Fatal(err)

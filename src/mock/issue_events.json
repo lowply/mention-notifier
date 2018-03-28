@@ -1,7 +1,7 @@
 [
   {
     "id": 1539017820,
-    "url": "https://api.github.com/repos/lowply/prueba/issues/events/1539017820",
+    "url": "https://api.github.com/repos/octocat/Spoon-Knife/issues/events/1539017820",
     "actor": {
       "login": "lowply",
       "id": 18643,
@@ -28,7 +28,7 @@
   },
   {
     "id": 1539017821,
-    "url": "https://api.github.com/repos/lowply/prueba/issues/events/1539017821",
+    "url": "https://api.github.com/repos/octocat/Spoon-Knife/issues/events/1539017821",
     "actor": {
       "login": "lowply",
       "id": 18643,
@@ -55,7 +55,7 @@
   },
   {
     "id": 1539017850,
-    "url": "https://api.github.com/repos/lowply/prueba/issues/events/1539017850",
+    "url": "https://api.github.com/repos/octocat/Spoon-Knife/issues/events/1539017850",
     "actor": {
       "login": "octoply",
       "id": 22492112,
@@ -86,7 +86,7 @@
   },
   {
     "id": 1539020098,
-    "url": "https://api.github.com/repos/lowply/prueba/issues/events/1539020098",
+    "url": "https://api.github.com/repos/octocat/Spoon-Knife/issues/events/1539020098",
     "actor": {
       "login": "octoply",
       "id": 22492112,
@@ -113,7 +113,7 @@
   },
   {
     "id": 1539020203,
-    "url": "https://api.github.com/repos/lowply/prueba/issues/events/1539020203",
+    "url": "https://api.github.com/repos/octocat/Spoon-Knife/issues/events/1539020203",
     "actor": {
       "login": "octoply",
       "id": 22492112,
@@ -140,7 +140,7 @@
   },
   {
     "id": 1539026001,
-    "url": "https://api.github.com/repos/lowply/prueba/issues/events/1539026001",
+    "url": "https://api.github.com/repos/octocat/Spoon-Knife/issues/events/1539026001",
     "actor": {
       "login": "octoply",
       "id": 22492112,
