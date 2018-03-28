@@ -80,8 +80,8 @@ main(){
 	has aws
 	[ -z "${AWSPROFILE}" ] && usage
 
-    NAME="mention-notifier"
-    AWS="aws --profile ${AWSPROFILE}"
+	NAME="mention-notifier"
+	AWS="aws --profile ${AWSPROFILE}"
 	TEMPLATE="cf.yml"
 
 	[ -f ${TEMPLATE} ] || abort "${TEMPLATE} not found."
