@@ -34,15 +34,6 @@ type IssueEvent struct {
 
 type IssueEvents []IssueEvent
 
-func (es *IssueEvents) query(url string) error {
-	var r = new(Requester)
-	err := r.GetAndUnmarshal(url, es)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (es *IssueEvents) closedOrReopened() bool {
 	for i := len(*es) - 1; i >= 0; i-- {
 		e := (*es)[i].Event

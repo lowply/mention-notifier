@@ -21,7 +21,7 @@ var config = Config{
 	SlackEndpoint:  "",
 	GitHubEndpoint: "https://api.github.com/notifications?participating=true",
 	Reason:         "mention",
-	Polling:        false,
+	Polling:        true,
 }
 
 func (c *Config) Dir() string {
