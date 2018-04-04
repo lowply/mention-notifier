@@ -51,12 +51,3 @@ type LatestComment struct {
 		} `json:"pull_request"`
 	} `json:"_links"`
 }
-
-func (l *LatestComment) query(url string) error {
-	var r = new(Requester)
-	err := r.GetAndUnmarshal(url, l)
-	if err != nil {
-		return err
-	}
-	return nil
-}

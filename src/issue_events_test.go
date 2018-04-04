@@ -21,7 +21,7 @@ func TestIssueEventsQuery(t *testing.T) {
 	defer ts.Close()
 
 	var es = new(IssueEvents)
-	err = es.query(ts.URL)
+	err = Query(ts.URL, es)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -52,16 +52,6 @@ type Notification struct {
 
 type Notifications []Notification
 
-func (ns *Notifications) query(url string) error {
-	var r = new(Requester)
-	r.checkLastModified = true
-	err := r.GetAndUnmarshal(url, ns)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func (n *Notification) markAsRead() error {
 	req, err := http.NewRequest("PATCH", n.URL, nil)
 	if err != nil {

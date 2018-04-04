@@ -21,7 +21,7 @@ func TestNotificationsQuery(t *testing.T) {
 	defer ts.Close()
 
 	var ns = new(Notifications)
-	err = ns.query(ts.URL)
+	err = Query(ts.URL, ns)
 	if err != nil {
 		log.Fatal(err)
 	}

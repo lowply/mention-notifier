@@ -15,7 +15,7 @@ func handler() error {
 	}
 
 	var ns = new(Notifications)
-	err = ns.query(config.GitHubEndpoint)
+	err = Query(config.GitHubEndpoint, ns)
 	if err != nil {
 		return err
 	}
@@ -40,7 +40,7 @@ func handler() error {
 			logger.Info("Checking the events of the issue/pr...")
 
 			var es = new(IssueEvents)
-			err := es.query(n.Subject.URL + "/events")
+			err := Query(n.Subject.URL+"/events", es)
 			if err != nil {
 				return err
 			}
@@ -52,12 +52,12 @@ func handler() error {
 		}
 
 		var c = new(LatestComment)
-		err := c.query(n.Subject.LatestCommentURL)
+		err := Query(n.Subject.LatestCommentURL, c)
 		if err != nil {
 			return err
 		}
 
-		if !strings.Contains(c.Body, config.Login) {
+		if !strings.Contains(c.Body, "@"+config.Login) {
 			logger.Info("There is a notification, but the latest comment didn't mention you.")
 			continue
 		}
