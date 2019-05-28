@@ -1,91 +1,42 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
-	"strings"
-
-	"github.com/aws/aws-lambda-go/lambda"
 )
 
-func handler() error {
-	err := config.Read()
+func main() {
+	// Required
+	required := []string{"GITHUB_ACTOR", "GITHUB_TOKEN", "SLACK_ENDPOINT"}
+	for _, v := range required {
+		if os.Getenv(v) == "" {
+			log.Fatal(v + " is empty.")
+		}
+	}
+
+	na := newNotificationAPI()
+	ns, err := na.get()
 	if err != nil {
-		return err
+		log.Fatal(err)
 	}
 
-	var ns = new(Notifications)
-	err = Query(config.GitHubEndpoint, ns)
-	if err != nil {
-		return err
-	}
-
-	if len(*ns) == 0 {
-		logger.Info("No notificaions")
-		return nil
-	}
-
-	for _, n := range *ns {
-		if n.Reason != config.Reason {
-			continue
-		}
-
-		if n.Subject.LatestCommentURL == "" {
-			logger.Info("Empty LatestCommentURL: " + n.Subject.URL)
-			continue
-		}
-
-		if !strings.Contains(n.Subject.LatestCommentURL, "comments") {
-			logger.Info("The latest comment URL is the issue URL: " + n.Subject.URL)
-			logger.Info("Checking the events of the issue/pr...")
-
-			var es = new(IssueEvents)
-			err := Query(n.Subject.URL+"/events", es)
-			if err != nil {
-				return err
-			}
-
-			if es.closedOrReopened() {
-				logger.Info("Skipping notification as the issue is closed or reopened.")
-				continue
-			}
-		}
-
-		var c = new(LatestComment)
-		err := Query(n.Subject.LatestCommentURL, c)
+	for _, n := range ns {
+		skip, err := n.check()
 		if err != nil {
-			return err
+			log.Fatal(err)
 		}
-
-		if !strings.Contains(c.Body, "@"+config.Login) {
-			logger.Info("There is a notification, but the latest comment didn't mention you.")
+		if skip {
 			continue
 		}
 
-		var s = new(Slack)
-		s.Notification = n
-		s.Comment = c
-
-		err = s.post()
+		err = n.notify()
 		if err != nil {
-			return err
+			log.Fatal(err)
 		}
 
 		err = n.markAsRead()
 		if err != nil {
-			return err
+			log.Fatal(err)
 		}
-	}
-	return nil
-}
-
-func main() {
-	if os.Getenv("LOCAL") == "true" {
-		err := handler()
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else {
-		lambda.Start(handler)
 	}
 }
