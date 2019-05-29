@@ -68,7 +68,7 @@ func (q *query) get(url string) ([]byte, error) {
 		// Adding the If-Modified-Since header to check if
 		// there are new notifications since the last workflow run.
 		// See https://developer.github.com/v3/activity/notifications/ for details.
-		q.lastRun = time.Now().Add(-q.interval)
+		q.lastRun = time.Now().UTC().Add(-q.interval)
 		logger.Info("Adding If-Modified-Since header")
 		req.Header.Add("If-Modified-Since", q.formatTime())
 	}
