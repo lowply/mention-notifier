@@ -85,6 +85,7 @@ func (n *notification) check() (bool, error) {
 }
 
 func (n *notification) notify() error {
+	logger.Info("Posting to Slack...")
 	s := newSlackAPI()
 	err := s.post(n)
 	if err != nil {
@@ -94,6 +95,7 @@ func (n *notification) notify() error {
 }
 
 func (n *notification) markAsRead() error {
+	logger.Info("Marking the thread read...")
 	q := newQuery()
 	err := q.patch(n.URL)
 	if err != nil {

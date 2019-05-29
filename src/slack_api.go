@@ -45,7 +45,6 @@ func (s *slackAPI) post(n *notification) error {
 	req, err := http.NewRequest("POST", s.endpoint, strings.NewReader(data.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	logger.Info("Posting to Slack")
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {

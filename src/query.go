@@ -96,7 +96,7 @@ func (q *query) get(url string) ([]byte, error) {
 	}
 
 	if q.polling && res.StatusCode == 304 {
-		logger.Info("No notifications since: " + q.formatTime())
+		logger.Info("304 Not Modified since: " + q.formatTime())
 		return nil, nil
 	}
 
