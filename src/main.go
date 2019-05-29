@@ -20,6 +20,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	if len(ns) == 0 {
+		return
+	}
+
 	for _, n := range ns {
 		skip, err := n.check()
 		if err != nil {
