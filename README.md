@@ -2,6 +2,12 @@
 
 A GitHub Action that notifies you on Slack when you're mentioned on GitHub.
 
+## Getting started
+
+1. Create a new repository or browse to any repository you own
+1. Prepare your [personal access token](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line) and Slack endpoint
+1. Create a new workflow that runs the Mention Notifier action every minute
+
 ## Environment variables
 
 - `_GITHUB_TOKEN` (*required*): Your personal access token with [the `notification` and the `repo` scope](https://help.github.com/en/articles/creating-a-personal-access-token-for-the-command-line). The `GITHUB_TOKEN` env var that comes with the workflow by default doesn't have the `notification` scope, so you'll need this env var instead. Remember to [Authorize](https://help.github.com/en/articles/authorizing-a-personal-access-token-for-use-with-a-saml-single-sign-on-organization) it if you blong to an organization that uses [SAML single sign-on](https://help.github.com/en/articles/about-authentication-with-saml-single-sign-on).
