@@ -19,7 +19,7 @@ type query struct {
 
 func newQuery() *query {
 	q := &query{}
-	q.token = os.Getenv("GITHUB_TOKEN")
+	q.token = os.Getenv("GITHUB_TOKEN_")
 	q.polling = true
 	q.interval = 1
 	return q
