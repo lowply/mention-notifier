@@ -33,19 +33,24 @@ func (q *query) parseEnv() error {
 		q.polling = b
 	}
 
-	i := ""
+	interval := 1
 	if os.Getenv("MN_INTERVAL") != "" {
-		i = os.Getenv("MN_INTERVAL")
-	} else {
-		i = "1"
+		mn_interval, err := strconv.Atoi(os.Getenv("MN_INTERVAL"))
+		if err != nil {
+			return err
+		}
+		interval = mn_interval
 	}
 
-	interval, err := time.ParseDuration(i + "m")
+	// Because sometimes action can take more than 1 minute to start up...
+	interval++
+
+	i, err := time.ParseDuration(strconv.Itoa(interval) + "m")
 	if err != nil {
 		return err
 	}
 
-	q.interval = interval
+	q.interval = i
 	return nil
 }
 
