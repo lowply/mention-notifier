@@ -2,21 +2,17 @@ package main
 
 import (
 	"encoding/json"
-	"os"
 	"strings"
 )
 
 type issueEventsAPI struct {
 	*query
-	endpoint      string
-	endpoint_last string
-	token         string
+	endpoint string
 }
 
 func newIssueEventsAPI(url string) *issueEventsAPI {
 	q := newQuery()
 	i := &issueEventsAPI{query: q}
-	i.token = os.Getenv("GITHUB_TOKEN")
 	i.endpoint = url + "/events"
 	return i
 }
