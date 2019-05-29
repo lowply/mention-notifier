@@ -11,16 +11,14 @@ A GitHub Action that notifies you on Slack when you're mentioned on GitHub.
 ## Workflow example
 
 ```
-workflow "Mention Notifier" {
-  resolves = ["Run Mention Notifier"]
+workflow "Run Mention Notifier" {
   on = "schedule(* * * * *)"
+  resolves = ["Mention Notifier"]
 }
 
-action "Run Mention Notifier" {
+action "Mention Notifier" {
   uses = "lowply/mention-notifier@0.0.1"
-  secrets = {
-    "SLACK_ENDPOINT",
-    "_GITHUB_TOKEN"
+  secrets = ["SLACK_ENDPOINT", "_GITHUB_TOKEN"]
 }
 ```
 
