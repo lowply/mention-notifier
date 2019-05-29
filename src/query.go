@@ -21,7 +21,6 @@ func newQuery() *query {
 	q := &query{}
 	q.token = os.Getenv("_GITHUB_TOKEN")
 	q.polling = true
-	q.interval = 1
 	return q
 }
 
@@ -34,13 +33,19 @@ func (q *query) parseEnv() error {
 		q.polling = b
 	}
 
+	i := ""
 	if os.Getenv("MN_INTERVAL") != "" {
-		interval, err := time.ParseDuration(os.Getenv("MN_INTERVAL") + "m")
-		if err != nil {
-			return err
-		}
-		q.interval = interval
+		i = os.Getenv("MN_INTERVAL")
+	} else {
+		i = "1"
 	}
+
+	interval, err := time.ParseDuration(i + "m")
+	if err != nil {
+		return err
+	}
+
+	q.interval = interval
 	return nil
 }
 
