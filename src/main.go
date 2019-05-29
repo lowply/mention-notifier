@@ -7,7 +7,7 @@ import (
 
 func main() {
 	// Required
-	required := []string{"GITHUB_ACTOR", "GITHUB_TOKEN", "SLACK_ENDPOINT"}
+	required := []string{"GITHUB_ACTOR", "_GITHUB_TOKEN", "SLACK_ENDPOINT"}
 	for _, v := range required {
 		if os.Getenv(v) == "" {
 			log.Fatal(v + " is empty.")
