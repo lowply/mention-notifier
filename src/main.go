@@ -21,7 +21,7 @@ func main() {
 	}
 
 	if len(ns) == 0 {
-		logger.Info("No notifications.")
+		log.Println("No notifications.")
 		return
 	}
 

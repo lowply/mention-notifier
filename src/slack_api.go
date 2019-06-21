@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -22,7 +23,7 @@ func newSlackAPI() *slackAPI {
 }
 
 func (s *slackAPI) post(n *notification) error {
-	updated_at := strconv.FormatInt(n.c.UpdatedAt.Unix(), 10)
+	updatedAt := strconv.FormatInt(n.c.UpdatedAt.Unix(), 10)
 	data := url.Values{}
 	data.Set("payload", `{
 		"username": "Mention Notifier",
@@ -38,7 +39,7 @@ func (s *slackAPI) post(n *notification) error {
 				"title": "`+n.Subject.Title+`",
 				"title_link": "`+n.c.HTMLURL+`",
 				"text": "Repository: `+n.Repository.FullName+`\n`+n.c.Body+`",
-				"ts": "`+updated_at+`"
+				"ts": "`+updatedAt+`"
 			}
 		]
 	}`)
@@ -56,7 +57,7 @@ func (s *slackAPI) post(n *notification) error {
 	}
 
 	defer resp.Body.Close()
-	logger.Info("DONE " + resp.Status)
+	log.Println("DONE " + resp.Status)
 
 	return nil
 }

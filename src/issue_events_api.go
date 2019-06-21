@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"strings"
 )
 
@@ -49,12 +50,12 @@ func (ia *issueEventsAPI) getTheLastURL() error {
 }
 
 func (ia *issueEventsAPI) get() ([]issueEvent, error) {
-	logger.Info("Getting the last URL in the Link header...")
+	log.Println("Getting the last URL in the Link header...")
 	err := ia.getTheLastURL()
 	if err != nil {
 		return nil, err
 	}
-	logger.Info("Getting the last events...")
+	log.Println("Getting the last events...")
 	data, err := ia.query.get(ia.endpoint)
 	if err != nil {
 		return nil, err
