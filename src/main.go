@@ -6,6 +6,7 @@ import (
 )
 
 func main() {
+	log.SetOutput(os.Stdout)
 	// Required
 	required := []string{"GITHUB_ACTOR", "_GITHUB_TOKEN", "SLACK_ENDPOINT"}
 	for _, v := range required {
