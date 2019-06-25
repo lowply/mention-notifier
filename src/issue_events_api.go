@@ -11,9 +11,18 @@ type issueEventsAPI struct {
 	endpoint string
 }
 
-func newIssueEventsAPI(url string) *issueEventsAPI {
+func newIssueEventsAPI(url, typ string) *issueEventsAPI {
 	q := newQuery()
 	i := &issueEventsAPI{query: q}
+
+	// The issue event endpoint is fixed to /repos/:owner/:repo/issues.
+	// If the notification's subject.url value is a URL ends with /pulls/:id
+	// we need to replace it to /issues/:id.
+	// Ref: https://developer.github.com/v3/issues/events/#get-a-single-event
+	if typ == "PullRequest" {
+		url = strings.Replace(url, "/pulls/", "/issues/", 1)
+	}
+
 	i.endpoint = url + "/events"
 	return i
 }
