@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -57,7 +56,7 @@ func (s *slackAPI) post(n *notification) error {
 	}
 
 	defer resp.Body.Close()
-	log.Println("DONE " + resp.Status)
+	log.Debugln("DONE " + resp.Status)
 
 	return nil
 }

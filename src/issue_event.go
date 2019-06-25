@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"time"
 )
 
@@ -12,7 +11,7 @@ type issueEvent struct {
 
 func (i *issueEvent) closedOrReopened() bool {
 	if i.Event == "closed" || i.Event == "reopened" {
-		log.Println("This issue was just " + i.Event + ", not sending Slack notification")
+		log.Debugln("This issue was just " + i.Event + ", not sending Slack notification")
 		return true
 	}
 	return false
