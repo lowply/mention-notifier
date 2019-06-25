@@ -13,6 +13,7 @@ type Logger struct {
 func newLogger() *Logger {
 	l := &Logger{}
 	l.SetOutput(os.Stdout)
+	l.SetFlags(_log.LstdFlags | _log.LUTC)
 	l.debug = false
 
 	if os.Getenv("DEBUG") == "true" {
