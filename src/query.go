@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -80,11 +79,11 @@ func (q *query) get(url string) ([]byte, error) {
 		// there are new notifications since the last workflow run.
 		// See https://developer.github.com/v3/activity/notifications/ for details.
 		q.lastRun = time.Now().UTC().Add(-q.interval)
-		log.Println("Adding If-Modified-Since header")
+		log.Debugln("Adding If-Modified-Since header")
 		req.Header.Add("If-Modified-Since", q.formatTime())
 	}
 
-	log.Println("GET " + url)
+	log.Debugln("GET " + url)
 
 	client := http.Client{}
 	res, err := client.Do(req)
@@ -93,16 +92,16 @@ func (q *query) get(url string) ([]byte, error) {
 	}
 	defer res.Body.Close()
 
-	log.Println("DONE " + res.Status)
+	log.Debugln("DONE " + res.Status)
 
 	if isNotificationAPI {
-		log.Println("X-RateLimit-Limit: " + res.Header.Get("X-RateLimit-Limit"))
-		log.Println("X-RateLimit-Remaining: " + res.Header.Get("X-RateLimit-Remaining"))
-		log.Println("X-RateLimit-Reset: " + res.Header.Get("X-RateLimit-Reset"))
+		log.Debugln("X-RateLimit-Limit: " + res.Header.Get("X-RateLimit-Limit"))
+		log.Debugln("X-RateLimit-Remaining: " + res.Header.Get("X-RateLimit-Remaining"))
+		log.Debugln("X-RateLimit-Reset: " + res.Header.Get("X-RateLimit-Reset"))
 	}
 
 	if q.polling && res.StatusCode == 304 {
-		log.Println("304 Not Modified since: " + q.formatTime())
+		log.Debugln("304 Not Modified since: " + q.formatTime())
 		return nil, nil
 	}
 
@@ -127,7 +126,7 @@ func (q *query) link(url string) (string, error) {
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
 	req.Header.Add("Authorization", "token "+q.token)
 
-	log.Println("GET " + url)
+	log.Debugln("GET " + url)
 
 	client := http.Client{}
 	res, err := client.Do(req)
@@ -136,7 +135,7 @@ func (q *query) link(url string) (string, error) {
 	}
 	defer res.Body.Close()
 
-	log.Println("DONE " + res.Status)
+	log.Debugln("DONE " + res.Status)
 
 	if res.StatusCode != 200 {
 		return link, errors.New("Unable to access to the endpoint: " + url)
@@ -153,14 +152,14 @@ func (q *query) patch(url string) error {
 		return err
 	}
 	req.Header.Add("Authorization", "token "+q.token)
-	log.Println("Marking the notification as read: " + url)
+	log.Debugln("Marking the notification as read: " + url)
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	log.Println("DONE " + resp.Status)
+	log.Debugln("DONE " + resp.Status)
 
 	if resp.StatusCode != 205 {
 		// https://developer.github.com/v3/activity/notifications/#mark-a-thread-as-read

@@ -1,9 +1,10 @@
 package main
 
 import (
-	"log"
 	"os"
 )
+
+var log = newLogger()
 
 func main() {
 	// Required
@@ -21,7 +22,7 @@ func main() {
 	}
 
 	if len(ns) == 0 {
-		log.Println("No notifications.")
+		log.Debugln("No notifications.")
 		return
 	}
 
