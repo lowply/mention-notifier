@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 	"strings"
 )
@@ -35,7 +36,7 @@ func (n *notification) check() (bool, error) {
 	}
 
 	if n.Subject.LatestCommentURL == "" {
-		logger.Info("Empty LatestCommentURL: " + n.Subject.URL)
+		log.Println("Empty LatestCommentURL: " + n.Subject.URL)
 		return true, nil
 	}
 
@@ -55,8 +56,8 @@ func (n *notification) check() (bool, error) {
 		// 4. Skip
 		//
 		// Therefore, checking if the latest events has either "closed" or "reopened" should be enough
-		logger.Info("The latest comment URL is not a comment URL: " + n.Subject.LatestCommentURL)
-		logger.Info("Checking the events of the issue/pr...")
+		log.Println("The latest comment URL is not a comment URL: " + n.Subject.LatestCommentURL)
+		log.Println("Checking the events of the issue/pr...")
 		ia := newIssueEventsAPI(n.Subject.URL)
 		is, err := ia.get()
 		if err != nil {
@@ -85,7 +86,7 @@ func (n *notification) check() (bool, error) {
 }
 
 func (n *notification) notify() error {
-	logger.Info("Posting to Slack...")
+	log.Println("Posting to Slack...")
 	s := newSlackAPI()
 	err := s.post(n)
 	if err != nil {
@@ -95,7 +96,7 @@ func (n *notification) notify() error {
 }
 
 func (n *notification) markAsRead() error {
-	logger.Info("Marking the thread read...")
+	log.Println("Marking the thread read...")
 	q := newQuery()
 	err := q.patch(n.URL)
 	if err != nil {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"strings"
 	"time"
 )
@@ -20,6 +21,6 @@ func (c *comment) mentioned(login string) bool {
 	if strings.Contains(c.Body, "@"+login) {
 		return true
 	}
-	logger.Info("There is a notification, but the latest comment didn't mention you.")
+	log.Println("There is a notification, but the latest comment didn't mention you.")
 	return false
 }

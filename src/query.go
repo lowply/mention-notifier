@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -35,11 +36,11 @@ func (q *query) parseEnv() error {
 
 	interval := 1
 	if os.Getenv("MN_INTERVAL") != "" {
-		mn_interval, err := strconv.Atoi(os.Getenv("MN_INTERVAL"))
+		mnInterval, err := strconv.Atoi(os.Getenv("MN_INTERVAL"))
 		if err != nil {
 			return err
 		}
-		interval = mn_interval
+		interval = mnInterval
 	}
 
 	// Because sometimes action can take more than 1 minute to start up...
@@ -79,11 +80,11 @@ func (q *query) get(url string) ([]byte, error) {
 		// there are new notifications since the last workflow run.
 		// See https://developer.github.com/v3/activity/notifications/ for details.
 		q.lastRun = time.Now().UTC().Add(-q.interval)
-		logger.Info("Adding If-Modified-Since header")
+		log.Println("Adding If-Modified-Since header")
 		req.Header.Add("If-Modified-Since", q.formatTime())
 	}
 
-	logger.Info("GET " + url)
+	log.Println("GET " + url)
 
 	client := http.Client{}
 	res, err := client.Do(req)
@@ -92,16 +93,16 @@ func (q *query) get(url string) ([]byte, error) {
 	}
 	defer res.Body.Close()
 
-	logger.Info("DONE " + res.Status)
+	log.Println("DONE " + res.Status)
 
 	if isNotificationAPI {
-		logger.Info("X-RateLimit-Limit: " + res.Header.Get("X-RateLimit-Limit"))
-		logger.Info("X-RateLimit-Remaining: " + res.Header.Get("X-RateLimit-Remaining"))
-		logger.Info("X-RateLimit-Reset: " + res.Header.Get("X-RateLimit-Reset"))
+		log.Println("X-RateLimit-Limit: " + res.Header.Get("X-RateLimit-Limit"))
+		log.Println("X-RateLimit-Remaining: " + res.Header.Get("X-RateLimit-Remaining"))
+		log.Println("X-RateLimit-Reset: " + res.Header.Get("X-RateLimit-Reset"))
 	}
 
 	if q.polling && res.StatusCode == 304 {
-		logger.Info("304 Not Modified since: " + q.formatTime())
+		log.Println("304 Not Modified since: " + q.formatTime())
 		return nil, nil
 	}
 
@@ -126,7 +127,7 @@ func (q *query) link(url string) (string, error) {
 	req.Header.Add("Accept", "application/vnd.github.v3+json")
 	req.Header.Add("Authorization", "token "+q.token)
 
-	logger.Info("GET " + url)
+	log.Println("GET " + url)
 
 	client := http.Client{}
 	res, err := client.Do(req)
@@ -135,7 +136,7 @@ func (q *query) link(url string) (string, error) {
 	}
 	defer res.Body.Close()
 
-	logger.Info("DONE " + res.Status)
+	log.Println("DONE " + res.Status)
 
 	if res.StatusCode != 200 {
 		return link, errors.New("Unable to access to the endpoint: " + url)
@@ -152,14 +153,14 @@ func (q *query) patch(url string) error {
 		return err
 	}
 	req.Header.Add("Authorization", "token "+q.token)
-	logger.Info("Marking the notification as read: " + url)
+	log.Println("Marking the notification as read: " + url)
 	client := http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
-	logger.Info("DONE " + resp.Status)
+	log.Println("DONE " + resp.Status)
 
 	if resp.StatusCode != 205 {
 		// https://developer.github.com/v3/activity/notifications/#mark-a-thread-as-read
