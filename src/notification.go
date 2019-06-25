@@ -58,7 +58,7 @@ func (n *notification) check() (bool, error) {
 		// Therefore, checking if the latest events has either "closed" or "reopened" should be enough
 		log.Println("The latest comment URL is not a comment URL: " + n.Subject.LatestCommentURL)
 		log.Println("Checking the events of the issue/pr...")
-		ia := newIssueEventsAPI(n.Subject.URL)
+		ia := newIssueEventsAPI(n.Subject.URL, n.Subject.Type)
 		is, err := ia.get()
 		if err != nil {
 			return true, err
