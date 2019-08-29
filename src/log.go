@@ -7,7 +7,8 @@ import (
 
 type Logger struct {
 	_log.Logger
-	debug bool
+	debug  bool
+	status bool
 }
 
 func newLogger() *Logger {
