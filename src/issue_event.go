@@ -7,6 +7,7 @@ import (
 type issueEvent struct {
 	Event     string    `json:"event"`
 	CreatedAt time.Time `json:"created_at"`
+	Hello bool
 }
 
 func (i *issueEvent) closedOrReopened() bool {
