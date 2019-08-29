@@ -23,6 +23,6 @@ func newLogger() *Logger {
 
 func (l *Logger) Debugln(msg string) {
 	if l.debug {
-		l.Println(msg)
+		l.Println(msg + ": end")
 	}
 }
