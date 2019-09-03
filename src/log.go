@@ -7,8 +7,7 @@ import (
 
 type Logger struct {
 	_log.Logger
-	debug  bool
-	status bool
+	debug bool
 }
 
 func newLogger() *Logger {
@@ -24,6 +23,6 @@ func newLogger() *Logger {
 
 func (l *Logger) Debugln(msg string) {
 	if l.debug {
-		l.Println(msg + ": end")
+		l.Println(msg)
 	}
 }
