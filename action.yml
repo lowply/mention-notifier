@@ -1,0 +1,9 @@
+name: 'Mention Notifier'
+author: 'Sho Mizutani <lowply@github.com>'
+description: 'A GitHub Action that sends notification to Slack when mentioned on GitHub'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+branding:
+  icon: 'at-sign'
+  color: 'red'
